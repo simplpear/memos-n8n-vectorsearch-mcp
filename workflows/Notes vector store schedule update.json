@@ -8,7 +8,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
       "typeVersion": 1.2,
       "position": [
-        -192,
+        -240,
         -176
       ],
       "id": "6ea78663-cf2f-4f2d-8e68-43047c2afd87",
@@ -74,7 +74,7 @@
     },
     {
       "parameters": {
-        "url": "https://notes.littlepear.org/api/v1/memos",
+        "url": "https://YOUR_URL/api/v1/memos",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendQuery": true,
@@ -208,7 +208,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "5ebd03f6-9fcf-40da-81ae-fefb9ca533a4",
+  "versionId": "6eb400fa-95bc-4c1a-bb91-d93406148457",
   "meta": {
     "templateId": "rag-starter-template",
     "instanceId": "0185d64b26201dfb8628d7ed6d19aa3a6540a2292f0c4edac0de8fd67b3009d9"

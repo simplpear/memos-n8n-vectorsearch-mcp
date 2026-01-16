@@ -2,15 +2,15 @@
 
 Complete integration between [Memos](https://www.usememos.com/) (self-hosted notes app) and [n8n](https://n8n.io/) that enables AI-powered note management through MCP server, vector search, and automated synchronization.
 
-## 🎯 What This Integration Provides
+## What This Integration Provides
 
 This integration consists of three complementary workflows:
 
 1. **MCP Server** - Exposes Memos API as MCP tools for AI assistants
-2. **Vector Search Agent** - AI agent with semantic search across all notes
+2. **Vector Search Agent** - AI agent with semantic search across all notes (example))
 3. **Vector Store Sync** - Automated workflow that keeps vector database updated
 
-## ✨ Features
+## Features
 
 ### MCP Server Capabilities
 - 📝 **Create** new memos with tags and visibility settings
@@ -21,11 +21,11 @@ This integration consists of three complementary workflows:
 - 📋 **Get** recent memos
 
 ### Vector Search
-- 🧠 Semantic search across all your notes using OpenAI embeddings
-- 💬 Natural language queries through AI chat interface
-- 🔄 Automatic synchronization with your notes database
+- Semantic search across all your notes using OpenAI embeddings
+- Natural language queries through AI chat interface
+- Automatic synchronization with your notes database
 
-## 📋 Prerequisites
+## Prerequisites
 
 - n8n instance (self-hosted or cloud)
 - Memos instance with API access
@@ -68,7 +68,7 @@ Import the three workflow files from the `workflows` folder:
 ### 4. Update API Endpoints
 
 In each workflow, update the Memos API URL to point to your instance:
-- Replace `https://notes.littlepear.org` with your Memos URL
+- Replace `https://notes.YOUR_DOMAIN.org` with your Memos URL
 - This needs to be updated in all HTTP Request nodes
 
 ### 5. Activate Workflows
@@ -78,7 +78,7 @@ In each workflow, update the Memos API URL to point to your instance:
 3. **Memos vector search tool** - Activate after vector store is populated
 4. **Memos MCP** - Activate to enable MCP server
 
-## 📂 Workflow Details
+## Workflow Details
 
 ### 1. MCP Server (`Memos MCP.json`)
 
@@ -103,13 +103,12 @@ Creates an MCP server that exposes Memos API as tools for AI assistants like Cla
 
 ![Vector Search](images/vector-search.png)
 
-AI-powered chat interface with semantic search through your notes using vector embeddings.
+Example of AI-powered chat interface with semantic search through your notes using vector embeddings tool.
 
 **Features:**
 - Natural language search across all notes
 - Finds notes by meaning, not just keywords
 - Chat interface with conversation memory
-- Returns top 5 most relevant results
 
 **Usage:**
 Open the chat interface and ask questions like:
@@ -124,7 +123,7 @@ Open the chat interface and ask questions like:
 Automated workflow that synchronizes all Memos notes into an in-memory vector database.
 
 **How it works:**
-1. Runs on schedule (default: hourly at 1 AM)
+1. Runs on schedule (default: daily at 1 AM)
 2. Fetches all memos from Memos API (up to 1000)
 3. Converts each note to embeddings using OpenAI
 4. Stores in n8n's in-memory vector store with key `vector_store_key`
@@ -132,10 +131,10 @@ Automated workflow that synchronizes all Memos notes into an in-memory vector da
 
 **Note:** The vector store uses n8n's built-in in-memory storage, shared across workflows via the memory key.
 
-## 🔧 Configuration Options
+## Configuration Options
 
 ### Sync Schedule
-By default, the vector store updates hourly. To change:
+By default, the vector store updates daily. To change:
 1. Open `Notes vector store schedule update` workflow
 2. Edit **Schedule Trigger** node
 3. Adjust the interval (e.g., every 6 hours, daily)
@@ -144,21 +143,20 @@ By default, the vector store updates hourly. To change:
 To change the number of results returned:
 1. Open `Memos vector search tool` workflow
 2. Edit **Search in notes** node
-3. Change `topK` parameter (default: 5)
+3. Change `Limit` parameter (default: 5)
 
 ### Page Size
 To fetch more/fewer memos:
 1. Edit the `pageSize` query parameter in HTTP Request nodes
 2. In sync workflow, default is 1000 (max for most Memos instances)
 
-## 📚 Additional Resources
+## Additional Resources
 
 - **Memos API Documentation**: [Memos API Reference](https://www.usememos.com/docs/api)
 - **n8n Vector Store**: [Vector Store Documentation](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.vectorstoreinmemory/)
 - **MCP Protocol**: [Model Context Protocol](https://modelcontextprotocol.io/)
-- **n8n LangChain Integration**: [n8n AI Documentation](https://docs.n8n.io/advanced-ai/)
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### Vector Search Returns No Results
 - Ensure the sync workflow has run at least once

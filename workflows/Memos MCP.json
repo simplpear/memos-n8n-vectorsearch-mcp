@@ -4,7 +4,7 @@
     {
       "parameters": {
         "toolDescription": "Get the most recent 10 memos from the system. Returns a list of recent notes.",
-        "url": "https://notes.littlepear.org/api/v1/memos",
+        "url": "https://YOUR_URL/api/v1/memos",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendQuery": true,
@@ -23,7 +23,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.3,
       "position": [
-        512,
+        400,
         576
       ],
       "credentials": {
@@ -36,7 +36,7 @@
     {
       "parameters": {
         "toolDescription": "Search for memos by content or filters. Examples: search text in content, filter by visibility, tags, etc.",
-        "url": "https://notes.littlepear.org/api/v1/memos",
+        "url": "https://YOUR_URL/api/v1/memos",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendQuery": true,
@@ -59,7 +59,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.3,
       "position": [
-        640,
+        592,
         576
       ],
       "credentials": {
@@ -73,7 +73,7 @@
       "parameters": {
         "toolDescription": "Create a new memo/note. Parameters: content (required, use #tag for tags), visibility (PRIVATE by default).",
         "method": "POST",
-        "url": "https://notes.littlepear.org/api/v1/memos",
+        "url": "https://YOUR_URL/api/v1/memos",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -100,7 +100,7 @@
       "parameters": {
         "toolDescription": "Update an existing memo. Requires name (format: memos/123). Can update content and/or visibility.",
         "method": "PATCH",
-        "url": "=https://notes.littlepear.org/api/v1/{{$fromAI('name', 'Memo identifier in format memos/123 (get from search results)', 'string')}}",
+        "url": "=https://YOUR_URL/api/v1/{{$fromAI('name', 'Memo identifier in format memos/123 (get from search results)', 'string')}}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendQuery": true,
@@ -136,7 +136,7 @@
       "parameters": {
         "toolDescription": "Upload a file/resource to Memos by providing URL. Returns resourceId for use in memo content.",
         "method": "POST",
-        "url": "https://notes.littlepear.org/api/v1/resources",
+        "url": "https://YOUR_URL/api/v1/resources",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -149,7 +149,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.3,
       "position": [
-        1024,
+        1040,
         576
       ],
       "credentials": {
@@ -163,7 +163,7 @@
       "parameters": {
         "toolDescription": "Delete a memo permanently. Requires name (format: memos/123). WARNING: Cannot be undone! Always confirm with user first.",
         "method": "DELETE",
-        "url": "={{ 'https://notes.littlepear.org/api/v1/' + $fromAI('name', 'Memo identifier in format memos/123 to delete (get from search)', 'string') }}",
+        "url": "={{ 'https://YOUR_URL/api/v1/' + $fromAI('name', 'Memo identifier in format memos/123 to delete (get from search)', 'string') }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {}
@@ -173,7 +173,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.3,
       "position": [
-        1152,
+        1200,
         576
       ],
       "credentials": {
@@ -286,7 +286,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "06021201-7897-4cd5-82db-1b0bad733790",
+  "versionId": "91dbd785-e227-4c03-bfcb-80cb347925a6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "0185d64b26201dfb8628d7ed6d19aa3a6540a2292f0c4edac0de8fd67b3009d9"
