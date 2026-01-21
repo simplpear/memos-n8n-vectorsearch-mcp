@@ -1,0 +1,218 @@
+{
+  "name": "Notes vector store schedule update",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        -176
+      ],
+      "id": "6ea78663-cf2f-4f2d-8e68-43047c2afd87",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "qD4PryaCzt1OC5vR",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        -176
+      ],
+      "id": "94aecac0-03f9-4915-932b-d14a2576607b",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list"
+        },
+        "clearStore": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        -400
+      ],
+      "id": "bf50a11f-ca6a-4e04-a6d2-42fee272b260",
+      "name": "Insert Data to Store"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            }
+          ]
+        }
+      },
+      "id": "36f10289-03b7-4d1a-86ee-895d0c6faa3c",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1088,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://YOUR_URL/api/v1/memos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "pageSize",
+              "value": "1000"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a35acc74-3ddc-48a1-8fe4-96fac61da9f5",
+      "name": "Get All Memos",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -864,
+        -400
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iUbn8BEaSnZ9sf1L",
+          "name": "Memos API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "memos",
+        "options": {}
+      },
+      "id": "0d7e239b-b5e2-4e82-91d0-e53b1419d2e8",
+      "name": "Split Memos",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "mode": "each",
+        "binaryPropertyName": "=Note name:{{ $json.snippet }}\nCreated at: {{ $json.createTime }}\nNote URL: https://notes.littlepear.org/{{ $json.name }}\nNote body: {{ $json.content }}\nTags: {{ $json.tags }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -416,
+        -400
+      ],
+      "id": "58cde82f-c065-4e3f-971d-c7ec2d2a40dc",
+      "name": "Convert to File"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get All Memos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Memos": {
+      "main": [
+        [
+          {
+            "node": "Split Memos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Memos": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "6eb400fa-95bc-4c1a-bb91-d93406148457",
+  "meta": {
+    "templateId": "rag-starter-template",
+    "instanceId": "0185d64b26201dfb8628d7ed6d19aa3a6540a2292f0c4edac0de8fd67b3009d9"
+  },
+  "id": "Xs3hh54aMa9llAVK",
+  "tags": []
+}

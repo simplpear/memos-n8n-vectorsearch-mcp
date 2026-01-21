@@ -1,0 +1,296 @@
+{
+  "name": "Memos MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "toolDescription": "Get the most recent 10 memos from the system. Returns a list of recent notes.",
+        "url": "https://YOUR_URL/api/v1/memos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "pageSize",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get_recent_tool_1",
+      "name": "Get Recent Memos",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        400,
+        576
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iUbn8BEaSnZ9sf1L",
+          "name": "Memos API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search for memos by content or filters. Examples: search text in content, filter by visibility, tags, etc.",
+        "url": "https://YOUR_URL/api/v1/memos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "filter",
+              "value": "={{ (() => { const searchText = $fromAI('searchText', 'Text to search in memo content (optional)', 'string'); const visibility = $fromAI('visibility', 'Filter by visibility: PUBLIC/PRIVATE/PROTECTED (optional)', 'string'); const tag = $fromAI('tag', 'Filter by tag (optional)', 'string'); const filters = []; if (searchText) { filters.push('content.contains(\\'' + searchText + '\\')'); } if (visibility) { filters.push('visibility == \\'' + visibility + '\\''); } if (tag) { filters.push('tags contains \\'' + tag + '\\''); } return filters.length > 0 ? filters.join(' && ') : ''; })() }}"
+            },
+            {
+              "name": "pageSize",
+              "value": "={{ $fromAI('pageSize', 'Number of results (default: 20)', 'number') || 20 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "578d1f91-0853-4808-9a05-80b071d1b4c9",
+      "name": "Search Memos",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        592,
+        576
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iUbn8BEaSnZ9sf1L",
+          "name": "Memos API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Create a new memo/note. Parameters: content (required, use #tag for tags), visibility (PRIVATE by default).",
+        "method": "POST",
+        "url": "https://YOUR_URL/api/v1/memos",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { content: $fromAI('content', 'Memo content. Use #tag format for tags (e.g., \"My note #work #important\")', 'string'), visibility: $fromAI('visibility', 'Visibility: PUBLIC, PRIVATE (default), PROTECTED', 'string') || 'PRIVATE' } }}",
+        "options": {}
+      },
+      "id": "830bfea6-e824-40d2-84b5-c51cca09ff60",
+      "name": "Create Memo",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        576
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iUbn8BEaSnZ9sf1L",
+          "name": "Memos API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Update an existing memo. Requires name (format: memos/123). Can update content and/or visibility.",
+        "method": "PATCH",
+        "url": "=https://YOUR_URL/api/v1/{{$fromAI('name', 'Memo identifier in format memos/123 (get from search results)', 'string')}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "update_mask",
+              "value": "={{ (() => { const content = $fromAI('content', 'New memo content (optional)', 'string'); const visibility = $fromAI('visibility', 'New visibility: PUBLIC/PRIVATE/PROTECTED (optional)', 'string'); const paths = []; if (content) { paths.push('content'); } if (visibility) { paths.push('visibility'); } return paths.join(','); })() }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ (() => { const content = $fromAI('content', 'New memo content (optional)', 'string'); const visibility = $fromAI('visibility', 'New visibility: PUBLIC/PRIVATE/PROTECTED (optional)', 'string'); const body = {}; if (content) { body.content = content; } if (visibility) { body.visibility = visibility; } return body; })() }}",
+        "options": {}
+      },
+      "id": "d762a9fe-ea53-4b73-a88a-4bcfce866a05",
+      "name": "Update Memo",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        896,
+        576
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iUbn8BEaSnZ9sf1L",
+          "name": "Memos API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Upload a file/resource to Memos by providing URL. Returns resourceId for use in memo content.",
+        "method": "POST",
+        "url": "https://YOUR_URL/api/v1/resources",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { filename: $fromAI('filename', 'Name of the file to upload', 'string'), externalLink: $fromAI('externalLink', 'URL to the file/image to upload', 'string'), type: $fromAI('type', 'MIME type (e.g., image/png, image/jpeg, application/pdf). Default: image/png', 'string') || 'image/png' } }}",
+        "options": {}
+      },
+      "id": "ca79e376-204a-4730-ba81-9278310b4163",
+      "name": "Upload Resource",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1040,
+        576
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iUbn8BEaSnZ9sf1L",
+          "name": "Memos API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Delete a memo permanently. Requires name (format: memos/123). WARNING: Cannot be undone! Always confirm with user first.",
+        "method": "DELETE",
+        "url": "={{ 'https://YOUR_URL/api/v1/' + $fromAI('name', 'Memo identifier in format memos/123 to delete (get from search)', 'string') }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "delete_memo_new",
+      "name": "Delete Memo",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1200,
+        576
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "iUbn8BEaSnZ9sf1L",
+          "name": "Memos API Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "2633960a-d190-47a5-a306-7cffd0de3c99"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        768,
+        352
+      ],
+      "id": "b2e8f5c2-ab15-4706-aeda-373eb00fe0f5",
+      "name": "MCP Server Trigger",
+      "webhookId": "2633960a-d190-47a5-a306-7cffd0de3c99",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "x8ZAgixn0jk9LOFH",
+          "name": "Affine MCP"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Recent Memos": {
+      "main": [
+        []
+      ],
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Memos": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Memo": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Memo": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Resource": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Memo": {
+      "main": [
+        []
+      ],
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "91dbd785-e227-4c03-bfcb-80cb347925a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0185d64b26201dfb8628d7ed6d19aa3a6540a2292f0c4edac0de8fd67b3009d9"
+  },
+  "id": "IauLvGXo42UWrLxo",
+  "tags": []
+}
